@@ -67,9 +67,27 @@ Key decisions regarding the model choice and deployment:
 
 ---
 
-## 📝 Author's Note
+## 1️⃣ Optimization
 
-This model serves as a **prototype**. For applications requiring better performance or handling complex dialogue, consider the following enhancements:
+- **Model Size:** Use pre-trained GPT-2 Base or few-shot prompting; fine-tuning <20 examples is ineffective.  
+- **Training Strategy:**  
+  - Few-shot prompting or synthetic data augmentation.  
+  - Light fine-tuning only if dataset >100 examples.  
+- **Hyperparameters:** Small batch (4–8), low learning rate (~1e-5), 2–5 epochs, early stopping.  
+- **Inference Optimization:** Limit context length, use FP16 on GPU, cache repeated responses.
 
-* Training with a significantly larger volume of conversational data.
-* Exploring larger pre-trained models such as **GPT-2 Medium**, **T5**, or **Longformer** for improved context understanding.
+---
+
+## 2️⃣ Deployment Feasibiliy
+
+- **Model Type:** Joblib-serialized GPT-2; requires PyTorch + Transformers.  
+- **Platforms:**  
+  - **Flask/FastAPI**: Easy API, needs ~500MB RAM.  
+  - **Serverless functions:** Base GPT-2 too heavy.  
+  - **Hugging Face Inference API:** Easy scalable deployment.  
+- **Latency:** CPU ~3–6s, GPU ~0.2–0.5s per response.  
+- **Scaling:** Small user base → single GPU instance; large → autoscaling GPU.
+
+---
+
+**Note:** With <20 conversations, model performance is limited. For production, increase dataset size or use few-shot prompting.
